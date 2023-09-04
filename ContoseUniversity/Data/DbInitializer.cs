@@ -15,17 +15,19 @@ namespace ContoseUniversity.Data
 
             var students = new Student[]
             {
-                new Student() {Id=1,FirstMidName="Kaarel-Martin",LastName="Noole",EnrollmentDate=DateTime.Now},
-                new Student() {Id=2,FirstMidName="Karl Umberto",LastName="Kats",EnrollmentDate=DateTime.Now},
-                new Student() {Id=3,FirstMidName="Kristjan Georg",LastName="Kessel",EnrollmentDate=DateTime.Now},
-                new Student() {Id=4,FirstMidName="Henri",LastName="Jervson",EnrollmentDate=DateTime.Now},
-                new Student() {Id=5,FirstMidName="Kenneth-Marcus",LastName="Aljas",EnrollmentDate=DateTime.Now},
+                new Student() {FirstMidName="Kaarel-Martin",LastName="Noole",EnrollmentDate=DateTime.Now},
+                new Student() {FirstMidName="Karl Umberto",LastName="Kats",EnrollmentDate=DateTime.Now},
+                new Student() {FirstMidName="Kristjan Georg",LastName="Kessel",EnrollmentDate=DateTime.Now},
+                new Student() {FirstMidName="Henri",LastName="Jervson",EnrollmentDate=DateTime.Now},
+                new Student() {FirstMidName="Kenneth-Marcus",LastName="Aljas",EnrollmentDate=DateTime.Now},
             };
 
             foreach (Student student in students)
             {
                 context.Students.Add(student);
             }
+
+            context.SaveChanges();
 
             var courses = new Course[]
             {
@@ -40,7 +42,9 @@ namespace ContoseUniversity.Data
             {
                 context.Courses.Add(course);
             }
-            
+
+            context.SaveChanges();
+
 
             var enrollments = new Enrollment[]
             {

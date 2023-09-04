@@ -14,8 +14,8 @@ namespace ContoseUniversity.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Course>().ToTable("Course");
-            modelBuilder.Entity<Enrollment>().ToTable("Enrollment");
+            modelBuilder.Entity<Course>().ToTable("Courses");
+            modelBuilder.Entity<Enrollment>().ToTable("Enrollments");
             modelBuilder.Entity<Student>().ToTable("Students");
         }
 

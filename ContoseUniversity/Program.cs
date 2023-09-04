@@ -1,15 +1,14 @@
-using ContoseUniversity;
 using ContoseUniversity.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 public class Program
 {
-    public static void Main(String[] args)
+    private static void Main(string[] args)
     {
-
         var builder = WebApplication.CreateBuilder(args);
+
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
@@ -35,42 +34,38 @@ public class Program
 
         app.UseAuthorization();
 
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-        });
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
 
         app.Run();
-
     }
 
-    private static void CreateDbIfNotExists(IHost Host)
+    private static void CreateDbIfNotExists(IHost host)
     {
-        using (var scope = Host.Services.CreateScope())
+        using (var scope = host.Services.CreateScope())
         {
             var services = scope.ServiceProvider;
             try
             {
-                var context = services.GetRequiredService<SchoolContext>();
+                var context = services.GetRequiredService<
+                    SchoolContext>();
                 DbInitializer.Initialize(context);
             }
             catch (Exception ex)
             {
                 var logger = services.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "an error occured creating the database");
-                throw;
             }
         }
-        Host.Run();
     }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder => 
-            {
-                webBuilder.UseStartup<Program>();
-            });
-    
+    //public static IHostBuilder CreateHostBuilder(string[] args) =>
+    //    Host.CreateDefaultBuilder(args)
+    //    .ConfigureWebHostDefaults(webBuilder =>
+    //    {
+    //        webBuilder.UseStartup<Program>();
+    //    });
 }
+
+
+

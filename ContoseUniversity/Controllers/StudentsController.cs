@@ -31,6 +31,9 @@ namespace ContoseUniversity.Controllers
             }
 
             var student = await _context.Students
+                .Include(s => s.Enrollments)
+                .ThenInclude(e => e.Course)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
@@ -40,26 +43,28 @@ namespace ContoseUniversity.Controllers
             return View(student);
         }
 
-        // GET: Students/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Students/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LastName,FirstMidName,EnrollmentDate")] Student student)
-        {
-            if (ModelState.IsValid)
+        public async Task<IActionResult> Create([Bind("EnrollmentDate,FirstMidName,LastName")] Student student)
+        {       
+
+            try
             {
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(student);
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Unable to save changes.");
+                return View(student);
+            }
+
         }
 
         // GET: Students/Edit/5
@@ -90,27 +95,24 @@ namespace ContoseUniversity.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StudentExists(student.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(student);
+                await _context.SaveChangesAsync();
             }
-            return View(student);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!StudentExists(student.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Students/Delete/5

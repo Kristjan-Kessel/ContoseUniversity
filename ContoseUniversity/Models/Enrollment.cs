@@ -1,4 +1,6 @@
-﻿namespace ContoseUniversity.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace ContoseUniversity.Models
 {
 
     public enum Grade
@@ -11,8 +13,10 @@
         public int EnrollmentId { get; set; }
         public int CourseId { get; set; }
         public int StudentId { get; set; }
+        [DisplayFormat(NullDisplayText = "No Grade")]
         public Grade? Grade { get; set; }
         public Student Student { get; set; }
+        public Course Course { get; set; }
     }
 
 }

@@ -10,6 +10,5 @@ namespace ContoseUniversity.Models
         [Display(Name = "Office Location")]
         public string Location { get; set; }
         public Instructor Instructor { get; set; }
-
     }
 }

@@ -18,59 +18,52 @@ namespace ContoseUniversity.Controllers
         {
             _context = context;
         }
-
-        // GET: Instructors
         public async Task<IActionResult> Index()
         {
-              return _context.Instructors != null ? 
-                          View(await _context.Instructors.ToListAsync()) :
-                          Problem("Entity set 'SchoolContext.Instructors'  is null.");
+            return View(await _context.Instructors.ToListAsync());
         }
 
-        // GET: Instructors/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Instructors == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            var instructor = await _context.Instructors
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var instructor = await _context.Instructors.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id);
             if (instructor == null)
             {
                 return NotFound();
             }
-
             return View(instructor);
         }
-
-        // GET: Instructors/Create
         public IActionResult Create()
         {
             return View();
         }
-
-        // POST: Instructors/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,LastName,FirstMidName,HireDate")] Instructor instructor)
+        public async Task<IActionResult> Create([Bind("HireDate,FirstMidName,LastName")] Instructor instructor)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(instructor);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _context.Add(instructor);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+            }
+            catch (Exception)
+            {
+
+                ModelState.AddModelError("", "Unable to save changes. " + "Try again, and if the problem persist " + "see your system administrator.");
             }
             return View(instructor);
         }
 
-        // GET: Instructors/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Instructors == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -83,81 +76,69 @@ namespace ContoseUniversity.Controllers
             return View(instructor);
         }
 
-        // POST: Instructors/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,LastName,FirstMidName,HireDate")] Instructor instructor)
+        public async Task<IActionResult> EditPost(int? id)
         {
-            if (id != instructor.Id)
+            if (id == null)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            var instructorToUpdate = await _context.Instructors.FirstOrDefaultAsync(s => s.Id == id);
+            if (await TryUpdateModelAsync<Instructor>(instructorToUpdate, "", s => s.FirstMidName, s => s.LastName, s => s.HireDate))
             {
                 try
                 {
-                    _context.Update(instructor);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException)
                 {
-                    if (!InstructorExists(instructor.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", "Unable to save changes. " + "Try again, and if the problem persist " + "see your system administrator.");
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(instructor);
+            return View(instructorToUpdate);
         }
-
-        // GET: Instructors/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false)
         {
-            if (id == null || _context.Instructors == null)
+            if (id == null)
             {
                 return NotFound();
             }
-
             var instructor = await _context.Instructors
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == id);
             if (instructor == null)
             {
                 return NotFound();
             }
-
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewData["ErrorMessage"] = "Deletion has failed, please try again, and if the problem presists " + "see your system administrator";
+            }
             return View(instructor);
         }
-
-        // POST: Instructors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Instructors == null)
-            {
-                return Problem("Entity set 'SchoolContext.Instructors'  is null.");
-            }
             var instructor = await _context.Instructors.FindAsync(id);
-            if (instructor != null)
+            if (instructor == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            try
             {
                 _context.Instructors.Remove(instructor);
-            }
-            
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
 
-        private bool InstructorExists(int id)
-        {
-          return (_context.Instructors?.Any(e => e.Id == id)).GetValueOrDefault();
+            }
+            catch (DbUpdateException)
+            {
+
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
+            }
         }
     }
 }

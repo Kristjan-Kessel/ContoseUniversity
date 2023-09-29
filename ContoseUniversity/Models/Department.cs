@@ -8,6 +8,7 @@ namespace ContoseUniversity.Models
         public int DepartmentId { get; set; }
         [StringLength(50, MinimumLength = 3)]
         public string Name { get; set; }
+        [DisplayFormat(DataFormatString = "{0:G29}")]
         [DataType(DataType.Currency)]
         [Column(TypeName = "Money")]
         public decimal Budget { get; set; }
@@ -17,8 +18,8 @@ namespace ContoseUniversity.Models
         public DateTime StartDate { get; set; }
         public int? InstructorId { get; set; }
         [Timestamp]
-        public byte RowVersion { get; set; }
-        public Instructor Administrator { get; set; }
-        public ICollection<Course> Courses { get; set; }
+        public byte? RowVersion { get; set; }
+        public Instructor? Administrator { get; set; }
+        public ICollection<Course>? Courses { get; set; }
     }
 }

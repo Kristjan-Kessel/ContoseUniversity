@@ -52,6 +52,53 @@ namespace ContoseUniversity.Controllers
             return View(vm);
         }
 
+        public async Task<IActionResult> Create()
+        {
+            var instructor = new Instructor();
+            instructor.CourseAssignments = new List<CourseAssignment>();
+            PopulateAssignedCourseData(instructor);
+
+            return View(instructor);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("HireDate,FirstMidName,LastName,OfficeAssignment")] Instructor instructor, string selectedCourses)
+        {
+            if (selectedCourses != null)
+            {
+                instructor.CourseAssignments = new List<CourseAssignment>();
+                foreach (var course in selectedCourses)
+                {
+                    var courseToAdd = new CourseAssignment
+                    {
+                        InstructorId = instructor.Id,
+                        CourseId = Convert.ToInt32(course)
+                    };
+                 
+                    instructor.CourseAssignments.Add(courseToAdd);
+                    
+
+                }
+            }
+
+            ModelState.Remove("selectedCourses");
+            ModelState.Remove("OfficeAssignment.Instructor");
+
+            if (ModelState.IsValid) 
+            {
+                _context.Add(instructor);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            PopulateAssignedCourseData(instructor);
+            return View(instructor);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -64,11 +111,6 @@ namespace ContoseUniversity.Controllers
                 return NotFound();
             }
             return View(instructor);
-        }
-
-        public IActionResult Create()
-        {
-            return View();
         }
 
         [HttpGet]

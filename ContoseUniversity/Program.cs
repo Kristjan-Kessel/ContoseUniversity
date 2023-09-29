@@ -50,6 +50,7 @@ public class Program
                 var context = services.GetRequiredService<
                     SchoolContext>();
                 DbInitializer.Initialize(context);
+                
             }
             catch (Exception ex)
             {

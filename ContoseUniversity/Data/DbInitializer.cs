@@ -14,9 +14,11 @@ namespace ContoseUniversity.Data
                 return;
             }
 
+            System.Diagnostics.Debug.WriteLine("Students");
+
             var students = new Student[]
             {
-                new Student() {FirstMidName="Kaarel-Martin",LastName="Noole",EnrollmentDate=DateTime.Now},
+                new Student() {FirstMidName="Kort-Mort",LastName="Dort",EnrollmentDate=DateTime.Now},
                 new Student() {FirstMidName="Karl Umberto",LastName="Kats",EnrollmentDate=DateTime.Now},
                 new Student() {FirstMidName="Kristjan Georg",LastName="Kessel",EnrollmentDate=DateTime.Now},
                 new Student() {FirstMidName="Henri",LastName="Jervson",EnrollmentDate=DateTime.Now},
@@ -28,6 +30,8 @@ namespace ContoseUniversity.Data
                 context.Students.Add(student);
             }
             context.SaveChanges();
+
+            System.Diagnostics.Debug.WriteLine("Instructors");
 
             var instructors = new Instructor[]
             {
@@ -43,12 +47,32 @@ namespace ContoseUniversity.Data
             }
             context.SaveChanges();
 
+            System.Diagnostics.Debug.WriteLine("Courses");
+
+            var courses = new Course[]
+            {
+                new Course() {CourseId=1050,Title="Coding",Credits=160},         
+                new Course() {CourseId=6666,Title="Testing",Credits=160},
+                new Course() {CourseId=1420,Title="Math",Credits=160},
+                new Course() {CourseId=1460,Title="Biology",Credits=160},
+                new Course() {CourseId=1234,Title="Defense",Credits=160},
+                new Course() {CourseId=6900,Title="Chemistry",Credits=160},
+            };
+
+            foreach (Course course in courses)
+            {
+                context.Courses.Add(course);
+            }
+            context.SaveChanges();
+
+            System.Diagnostics.Debug.WriteLine("departments");
+
             var departments = new Department[]
             {
-                new Department{ 
-                    Name="Terrorism", 
-                    Budget=13_000_000_000, 
-                    StartDate = DateTime.Parse("2001/9/10"), 
+                new Department{
+                    Name="Terrorism",
+                    Budget=13_000_000_000,
+                    StartDate = DateTime.Parse("2001/9/10"),
                     InstructorId = instructors.Single(i => i.LastName == "Bush").Id
                 },
                 new Department{
@@ -71,27 +95,14 @@ namespace ContoseUniversity.Data
                 }
             };
 
-            foreach(Department department in departments)
+            foreach (Department department in departments)
             {
                 context.Departments.Add(department);
+
             }
             context.SaveChanges();
 
-            var courses = new Course[]
-            {
-                new Course() {CourseId=1050,Title="Coding",Credits=160},         
-                new Course() {CourseId=6666,Title="Testing",Credits=160},
-                new Course() {CourseId=1420,Title="Math",Credits=160},
-                new Course() {CourseId=1420,Title="Biology",Credits=160},
-                new Course() {CourseId=1234,Title="Defense",Credits=160},
-                new Course() {CourseId=6900,Title="Chemistry",Credits=160},
-            };
-
-            foreach (Course course in courses)
-            {
-                context.Courses.Add(course);
-            }
-            context.SaveChanges();
+            System.Diagnostics.Debug.WriteLine("Offices");
 
             var officeAssignments = new OfficeAssignment[]
             {

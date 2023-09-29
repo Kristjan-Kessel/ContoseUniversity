@@ -54,15 +54,18 @@ namespace ContoseUniversity.Controllers
         //post create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DepartmentId,Name,Budget,StartDate,RowVersion,InstructorId")] Department department) 
+        public async Task<IActionResult> Create([Bind("Name,Budget,StartDate,RowVersion,InstructorId")] Department department) 
         {
+            ModelState.Remove("Courses");
+            ModelState.Remove("Administrator");
+
             if (ModelState.IsValid)
             {
                 _context.Add(department);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
+            
             ViewData["InstructorId"] = new SelectList(_context.Instructors,"Id","FullName",department.InstructorId);
             return View(department);
 
@@ -93,8 +96,11 @@ namespace ContoseUniversity.Controllers
         //post edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, byte[] rowVersion)
+        public async Task<IActionResult> Edit(int? id, byte[] RowVersion)
         {
+            ModelState.Remove("Courses");
+            ModelState.Remove("Administrator");
+            ModelState.Remove("RowVersion");
             if (id == null)
             {
                 return NotFound();
@@ -113,7 +119,7 @@ namespace ContoseUniversity.Controllers
                 return View(deletedDepartment);
             }
 
-            _context.Entry(departmentToUpdate).Property("RowVersion").OriginalValue = rowVersion;
+            _context.Entry(departmentToUpdate).Property("RowVersion").OriginalValue = RowVersion;
 
             if (await TryUpdateModelAsync<Department>(departmentToUpdate, "", s => s.Name, s => s.StartDate, s => s.InstructorId, s => s.Budget))
             {

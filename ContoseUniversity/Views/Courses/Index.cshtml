@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ContoseUniversity.Models.Course>
+﻿@model IEnumerable<ContoseUniversity.Models.CourseViewModel>
 @{
     ViewData["Title"] = "Index";
 }
@@ -12,13 +12,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                @Html.DisplayNameFor(model => model.course.Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Credits)
+                @Html.DisplayNameFor(model => model.course.Credits)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Department)
+                @Html.DisplayNameFor(model => model.course.Department)
+            </th>
+            <th>
+                Student Count
+            </th>
+            <th>
+                Instructors
             </th>
             <th></th>
         </tr>
@@ -28,18 +34,29 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Title)
+                    @Html.DisplayFor(modelItem => item.course.Title)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Credits)
+                    @Html.DisplayFor(modelItem => item.course.Credits)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Department.Name)
+                    @Html.DisplayFor(modelItem => item.course.Department.Name)
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.CourseId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.CourseId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.CourseId">Delete</a>
+                    @item.assignedStudents.Count()
+                </td>
+                <td>
+                    @{
+                        foreach (var instructor in item.assignedInstructors)
+                        {
+                            @instructor.FullName @:<br>
+                        }
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.course.CourseId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.course.CourseId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.course.CourseId">Delete</a>
                 </td>
             </tr>
         }

@@ -19,7 +19,8 @@ namespace ContoseUniversity.Controllers
         public async Task<IActionResult> Index()
         {
             var schoolContext = _context.Departments
-                .Include(d => d.Administrator);
+                .Include(d => d.Administrator)
+                .Include(d => d.Courses);
             return View(await schoolContext.ToListAsync());
         }
 

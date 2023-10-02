@@ -18,9 +18,35 @@ namespace ContoseUniversity.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var schoolContext = _context.Courses
-                .Include(c => c.Department);
-            return View(await schoolContext.ToListAsync());
+            // Retrieve a list of courses including department information
+            var courses = await _context.Courses
+                .Include(c => c.Department)
+                .ToListAsync();
+
+            // Create a list of CourseViewModel objects to hold the data for each course
+            var courseViewModels = new List<CourseViewModel>();
+
+            // Populate each CourseViewModel
+            foreach (var course in courses)
+            {
+                var courseViewModel = new CourseViewModel
+                {
+                    course = course,
+                    assignedInstructors = await _context.CourseAssignments
+                        .Where(ca => ca.CourseId == course.CourseId)
+                        .Select(ca => ca.Instructor)
+                        .ToListAsync(),
+                    assignedStudents = await _context.Enrollments
+                        .Where(ca => ca.CourseId == course.CourseId)
+                        .Select(ca => ca.Student)
+                        .ToListAsync(),
+                };
+
+                courseViewModels.Add(courseViewModel);
+            }
+
+            // Pass the list of CourseViewModels to the view
+            return View(courseViewModels);
         }
 
         [HttpGet]
@@ -39,7 +65,21 @@ namespace ContoseUniversity.Controllers
                 return NotFound();
             }
 
-            return View(course);
+            var courseViewModel = new CourseViewModel
+            {
+                course = course,
+                assignedInstructors = await _context.CourseAssignments
+                .Where(ca => ca.CourseId == course.CourseId)
+                .Select(ca => ca.Instructor)
+                .ToListAsync(),
+                assignedStudents = await _context.Enrollments
+                .Where(ca => ca.CourseId == course.CourseId)
+                .Select(ca => ca.Student)
+                .ToListAsync(),
+
+            };
+
+            return View(courseViewModel);
         }
 
         //get create
@@ -143,6 +183,7 @@ namespace ContoseUniversity.Controllers
             }
 
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "DepartmentId", "Name");
+            ViewData["Instructors"] = await _context.Instructors.ToListAsync();
 
             return View(course);
         }

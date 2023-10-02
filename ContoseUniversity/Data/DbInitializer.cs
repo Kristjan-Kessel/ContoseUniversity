@@ -47,24 +47,6 @@ namespace ContoseUniversity.Data
             }
             context.SaveChanges();
 
-            System.Diagnostics.Debug.WriteLine("Courses");
-
-            var courses = new Course[]
-            {
-                new Course() {CourseId=1050,Title="Coding",Credits=160},         
-                new Course() {CourseId=6666,Title="Testing",Credits=160},
-                new Course() {CourseId=1420,Title="Math",Credits=160},
-                new Course() {CourseId=1460,Title="Biology",Credits=160},
-                new Course() {CourseId=1234,Title="Defense",Credits=160},
-                new Course() {CourseId=6900,Title="Chemistry",Credits=160},
-            };
-
-            foreach (Course course in courses)
-            {
-                context.Courses.Add(course);
-            }
-            context.SaveChanges();
-
             System.Diagnostics.Debug.WriteLine("departments");
 
             var departments = new Department[]
@@ -73,25 +55,7 @@ namespace ContoseUniversity.Data
                     Name="Terrorism",
                     Budget=13_000_000_000,
                     StartDate = DateTime.Parse("2001/9/10"),
-                    InstructorId = instructors.Single(i => i.LastName == "Bush").Id
-                },
-                new Department{
-                    Name="Gym",
-                    Budget=5_000_000,
-                    StartDate = DateTime.Parse("2003/2/23"),
-                    InstructorId = instructors.Single(i => i.LastName == "Härma").Id
-                },
-                new Department{
-                    Name="Hunting",
-                    Budget=0,
-                    StartDate = DateTime.Parse("20016/2/6"),
-                    InstructorId = instructors.Single(i => i.LastName == "Big").Id
-                },
-                new Department{
-                    Name="Gathering",
-                    Budget=0,
-                    StartDate = DateTime.Parse("2001/9/10"),
-                    InstructorId = instructors.Single(i => i.LastName == "Orav").Id
+                    InstructorId = 1
                 }
             };
 
@@ -102,29 +66,27 @@ namespace ContoseUniversity.Data
             }
             context.SaveChanges();
 
+            System.Diagnostics.Debug.WriteLine("Courses");
+
+            var courses = new Course[]
+            {
+                new Course() {Title="Coding",Credits=160, DepartmentId=1}
+            };
+
+            foreach (Course course in courses)
+            {
+                context.Courses.Add(course);
+            }
+            context.SaveChanges();
+
             System.Diagnostics.Debug.WriteLine("Offices");
 
             var officeAssignments = new OfficeAssignment[]
             {
                 new OfficeAssignment() 
                 {
-                    InstructorId = instructors.Single(i => i.LastName == "Bush").Id,
+                    InstructorId = 1,
                     Location = "Oval Office"
-                },
-                new OfficeAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Härma").Id,
-                    Location = "Backyard"
-                },
-                new OfficeAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Big").Id,
-                    Location = "Depths Of Hell"
-                },
-                new OfficeAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Orav").Id,
-                    Location = "Tree"
                 }
             };
 
@@ -138,33 +100,8 @@ namespace ContoseUniversity.Data
             {
                 new CourseAssignment()
                 {
-                    InstructorId = instructors.Single(i => i.LastName == "Bush").Id,
-                    CourseId = courses.Single(i => i.Title == "Defense").CourseId
-                },
-                new CourseAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Bush").Id,
-                    CourseId = courses.Single(i => i.Title == "Chemistry").CourseId
-                },
-                new CourseAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Orav").Id,
-                    CourseId = courses.Single(i => i.Title == "Math").CourseId
-                },
-                new CourseAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Orav").Id,
-                    CourseId = courses.Single(i => i.Title == "Biology").CourseId
-                },
-                new CourseAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Big").Id,
-                    CourseId = courses.Single(i => i.Title == "Coding").CourseId
-                },
-                new CourseAssignment()
-                {
-                    InstructorId = instructors.Single(i => i.LastName == "Big").Id,
-                    CourseId = courses.Single(i => i.Title == "Testing").CourseId
+                    InstructorId = 1,
+                    CourseId = 0
                 }
             };
 

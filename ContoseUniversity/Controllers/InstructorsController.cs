@@ -52,23 +52,20 @@ namespace ContoseUniversity.Controllers
             return View(vm);
         }
 
-        public async Task<IActionResult> Create()
+        [HttpGet]
+        public IActionResult Create()
         {
             var instructor = new Instructor();
             instructor.CourseAssignments = new List<CourseAssignment>();
             PopulateAssignedCourseData(instructor);
-
-            return View(instructor);
+            return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("HireDate,FirstMidName,LastName,OfficeAssignment")] Instructor instructor, string selectedCourses)
+        public async Task<IActionResult> Create([Bind("HireDate,FirstMidName,LastName,OfficeAssignment")] Instructor instructor, string[] selectedCourses)
         {
-
-            ModelState.Remove("selectedCourses");
             ModelState.Remove("OfficeAssignment.Instructor");
-
             if (selectedCourses != null)
             {
                 instructor.CourseAssignments = new List<CourseAssignment>();
@@ -77,25 +74,19 @@ namespace ContoseUniversity.Controllers
                     var courseToAdd = new CourseAssignment
                     {
                         InstructorId = instructor.Id,
-                        CourseId = Convert.ToInt32(course)
+                        CourseId = int.Parse(course)
                     };
-                 
                     instructor.CourseAssignments.Add(courseToAdd);
-                    
-
                 }
             }
-
-            if (ModelState.IsValid) 
+            if (ModelState.IsValid)
             {
                 _context.Add(instructor);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
             PopulateAssignedCourseData(instructor);
             return View(instructor);
-
         }
 
         [HttpPost]
@@ -127,6 +118,7 @@ namespace ContoseUniversity.Controllers
                 .ThenInclude(i => i.Course)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (instructor == null)
             {
                 return NotFound();

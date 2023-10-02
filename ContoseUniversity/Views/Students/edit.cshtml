@@ -27,6 +27,33 @@
                 <input asp-for="EnrollmentDate" class="form-control" />
                 <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <table>
+                    <tr>
+                        @{
+                            int cnt = 0;
+                            List<ContoseUniversity.Models.AssignedCourseData> courses = ViewBag.Courses;
+
+                            foreach (var course in courses)
+                            {
+                                if (cnt++ %3 == 0)
+                                {
+                                    @:</tr><tr>
+                                }
+                                @:<td>
+                                <input type="checkbox"
+                                name="selectedCourses"
+                                value="@course.CourseId"
+                                @(Html.Raw(course.Assigned ? "checked=\"checked\"" : ""))/>
+                                @course.CourseId @: @course.Title
+                                @:</td>
+                            }
+                        }
+                    </tr>
+                </table>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

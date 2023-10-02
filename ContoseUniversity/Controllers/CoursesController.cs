@@ -97,9 +97,28 @@ namespace ContoseUniversity.Controllers
             Course course = await _context.Courses
                 .SingleAsync(c => c.CourseId == courseId);
 
-            //var enrollments = await _context.Enrollments
-            //     .Where(d => d.CourseId == courseId)
-            //     .ToListAsync();
+            //remove any associated course assignments
+            var assignments = await _context.CourseAssignments
+            .Where(ca => ca.CourseId == courseId)
+            .ToListAsync();
+
+            foreach (var assignment in assignments)
+            {
+                _context.CourseAssignments.Remove(assignment);
+            }
+
+            //remove enrollments
+            var enrollments = await _context.Enrollments
+                .Where(e => e.CourseId == courseId)
+                .ToListAsync();
+
+            foreach(var enrollment in enrollments)
+            {
+                _context.Enrollments.Remove(enrollment);
+            }
+
+            await _context.SaveChangesAsync();
+
 
             _context.Courses.Remove(course);
 

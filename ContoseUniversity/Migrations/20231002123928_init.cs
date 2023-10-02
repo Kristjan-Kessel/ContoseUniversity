@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ContoseUniversity.Migrations
 {
-    public partial class update : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -49,7 +49,7 @@ namespace ContoseUniversity.Migrations
                     Budget = table.Column<decimal>(type: "Money", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     InstructorId = table.Column<int>(type: "int", nullable: true),
-                    RowVersion = table.Column<byte>(type: "tinyint", rowVersion: true, nullable: false)
+                    RowVersion = table.Column<byte>(type: "tinyint", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -83,10 +83,11 @@ namespace ContoseUniversity.Migrations
                 name: "Course",
                 columns: table => new
                 {
-                    CourseId = table.Column<int>(type: "int", nullable: false),
+                    CourseId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Credits = table.Column<int>(type: "int", nullable: false),
-                    DepartmentId = table.Column<int>(type: "int", nullable: true)
+                    DepartmentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,7 +96,8 @@ namespace ContoseUniversity.Migrations
                         name: "FK_Course_Department_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "Department",
-                        principalColumn: "DepartmentId");
+                        principalColumn: "DepartmentId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(

@@ -7,7 +7,6 @@ namespace ContoseUniversity.Models
 {
     public class Course
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int CourseId { get; set; }
         public string Title { get; set; }
         public int Credits { get; set; }

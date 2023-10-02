@@ -25,7 +25,10 @@ namespace ContoseUniversity.Migrations
             modelBuilder.Entity("ContoseUniversity.Models.Course", b =>
                 {
                     b.Property<int>("CourseId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CourseId"), 1L, 1);
 
                     b.Property<int>("Credits")
                         .HasColumnType("int");

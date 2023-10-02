@@ -15,6 +15,7 @@ namespace ContoseUniversity.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var schoolContext = _context.Departments
@@ -22,6 +23,7 @@ namespace ContoseUniversity.Controllers
             return View(await schoolContext.ToListAsync());
         }
 
+        [HttpGet]
         public async Task<IActionResult> Details(int? Id)
         {
             if (Id == null)
@@ -44,14 +46,13 @@ namespace ContoseUniversity.Controllers
 
         }
 
-        //get create
+        [HttpGet]
         public IActionResult Create()
         {
             ViewData["InstructorId"] = new SelectList(_context.Instructors, "Id", "FullName");
             return View();
         }
 
-        //post create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Budget,StartDate,RowVersion,InstructorId")] Department department) 
@@ -71,7 +72,7 @@ namespace ContoseUniversity.Controllers
 
         }
 
-        //get edit
+        [HttpGet]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -177,7 +178,7 @@ namespace ContoseUniversity.Controllers
 
         }
 
-        //get delete
+        [HttpGet]
         public async Task<IActionResult> Delete(int? id, bool? concurrencyError) 
         {
             if (id == null)
@@ -207,7 +208,6 @@ namespace ContoseUniversity.Controllers
             return View(department);
         }
 
-        //post delete
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(Department department)

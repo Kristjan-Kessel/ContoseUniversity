@@ -190,7 +190,7 @@ namespace ContoseUniversity.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CourseId,Title,Credits,DepartmentId")] Course course)
+        public async Task<IActionResult> Edit(int id, [Bind("CourseId,Title,Credits,DepartmentId")] Course course, string[] selectedInstructors)
         {
             if (id != course.CourseId)
             {
@@ -203,6 +203,42 @@ namespace ContoseUniversity.Controllers
                 {
                     _context.Update(course);
                     await _context.SaveChangesAsync();
+
+                    // Assuming selectedInstructors is a list of selected instructor IDs
+                    var selectedInstructorIds = selectedInstructors.Select(id => int.Parse(id)).ToList();
+                    var courseId = id;
+
+                    // Get all course assignments for the current course
+                    var existingAssignments = await _context.CourseAssignments
+                        .Where(ca => ca.CourseId == courseId)
+                        .ToListAsync();
+
+                    // Remove course assignments for instructors who are not selected
+                    foreach (var assignment in existingAssignments.ToList())
+                    {
+                        if (!selectedInstructorIds.Contains(assignment.InstructorId))
+                        {
+                            _context.CourseAssignments.Remove(assignment);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+
+                    // Add course assignments for selected instructors if they don't already have one
+                    foreach (var selectedId in selectedInstructorIds)
+                    {
+                        if (!existingAssignments.Any(ca => ca.InstructorId == selectedId))
+                        {
+                            var assignment = new CourseAssignment
+                            {
+                                CourseId = courseId,
+                                InstructorId = selectedId
+                            };
+
+                            _context.CourseAssignments.Add(assignment);
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
